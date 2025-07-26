@@ -143,14 +143,45 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.drawImage(frameEl, 0, 0, outWidth, outHeight);
     }
 
-    // Export as PNG and trigger download
-    outCanvas.toBlob((blob) => {
+    // Export as PNG then either invoke the Web Share API (iOS / mobile friendly)
+    // or fall back to a traditional download via a temporary anchor element.
+    outCanvas.toBlob(async (blob) => {
+      if (!blob) return;
+
+      const fileName = 'framed-photo.png';
+
+      // Attempt to use the Web Share API with file support (iOS / Android mobile only)
+      const isMobile = (() => {
+        if (navigator.userAgentData && typeof navigator.userAgentData.mobile === 'boolean') {
+          return navigator.userAgentData.mobile;
+        }
+        return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      })();
+
+      try {
+        const file = new File([blob], fileName, { type: 'image/png' });
+        // Only invoke share on mobile devices – desktop Safari/Chrome may support share but users typically expect a download instead.
+        if (isMobile && navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({ files: [file], title: 'Framed Photo' });
+          return; // Sharing succeeded, we're done.
+        }
+      } catch (err) {
+        // Either Web Share not supported / user cancelled / permissions – fall through to download.
+      }
+
+      // Fallback: create a temporary <a> element and trigger a download.
+      const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = 'framed-photo.png';
+      link.href = url;
+      link.download = fileName;
+
+      // Safari on iOS requires the element to be in the DOM to trigger the download.
+      document.body.appendChild(link);
       link.click();
-      // Cleanup revokes the object URL after download
-      setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+      document.body.removeChild(link);
+
+      // Cleanup: revoke the blob URL after a short delay to ensure the download finished.
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     }, 'image/png');
   });
 }); 
