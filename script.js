@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let frameAspect = null; // width / height ratio of the frame
   let cropper = null;
+  let previewTimeout = null; // debounce handle for preview updates
 
   // Pre-load the frame to get its natural dimensions
   frameEl.src = FRAME_URL;
@@ -53,9 +54,12 @@ document.addEventListener('DOMContentLoaded', () => {
         frameEl.style.display = 'block';
         adjustFrameOverlay();
         downloadBtn.disabled = false;
+
+        // Initial preview render
+        schedulePreviewUpdate();
       },
-      crop() { adjustFrameOverlay(); },
-      zoom() { adjustFrameOverlay(); }
+      crop() { adjustFrameOverlay(); schedulePreviewUpdate(); },
+      zoom() { adjustFrameOverlay(); schedulePreviewUpdate(); }
     });
   });
 
@@ -67,6 +71,39 @@ document.addEventListener('DOMContentLoaded', () => {
     frameEl.style.height = `${cropBox.height}px`;
     frameEl.style.left = `${cropBox.left}px`;
     frameEl.style.top = `${cropBox.top}px`;
+  }
+
+  function schedulePreviewUpdate() {
+    // Debounce rapid crop/zoom events to avoid heavy work every tick
+    if (previewTimeout) {
+      clearTimeout(previewTimeout);
+    }
+    previewTimeout = setTimeout(updatePreview, 150);
+  }
+
+  function updatePreview() {
+    if (!cropper) return;
+    // Determine preview size based on the left preview image width
+    const previewTarget = document.getElementById('framePreview');
+    const targetWidth = previewTarget.clientWidth || 300;
+    const aspect = frameAspect || 1;
+    const targetHeight = Math.round(targetWidth / aspect);
+
+    const photoCanvas = cropper.getCroppedCanvas({
+      width: targetWidth,
+      height: targetHeight
+    });
+
+    // Compose onto an off-screen canvas
+    const canvas = document.createElement('canvas');
+    canvas.width = targetWidth;
+    canvas.height = targetHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(photoCanvas, 0, 0, targetWidth, targetHeight);
+    if (frameEl.complete && frameEl.naturalWidth) {
+      ctx.drawImage(frameEl, 0, 0, targetWidth, targetHeight);
+    }
+    previewTarget.src = canvas.toDataURL('image/png');
   }
 
   downloadBtn.addEventListener('click', () => {
