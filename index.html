@@ -8,23 +8,30 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <main class="container">
+  <header>
     <h1>Photo Frame Creator</h1>
+  </header>
 
-    <label class="upload-label">
-      <span>Select a photo</span>
-      <input type="file" id="upload" accept="image/*" hidden />
-    </label>
+  <div class="main">
+    <aside class="left">
+      <!-- Static frame preview -->
+      <img id="framePreview" src="./frame.png" alt="Frame preview" />
+    </aside>
 
-    <section class="workspace">
+    <section class="right">
+      <label class="upload-label">
+        <span>Select a photo</span>
+        <input type="file" id="upload" accept="image/*" hidden />
+      </label>
+
       <div class="canvas-container">
         <img id="image" alt="Your photo" style="display:none;" />
         <img id="frame" class="frame-overlay" src="./frame.png" alt="Frame overlay" style="display:none;" />
       </div>
-    </section>
 
-    <button id="download" disabled>Download Framed Photo</button>
-  </main>
+      <button id="download" disabled>Download Framed Photo</button>
+    </section>
+  </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
   <script src="script.js"></script>

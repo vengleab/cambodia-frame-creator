@@ -5,11 +5,33 @@ body {
   color: #333;
 }
 
-.container {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 2rem;
+header {
   text-align: center;
+  padding: 1rem 0;
+}
+
+.main {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.left {
+  flex: 1 1 300px;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+.left img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #ccc;
+}
+
+.right {
+  flex: 2 1 500px;
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
 .upload-label {
@@ -25,16 +47,10 @@ body {
   background: #0069d9;
 }
 
-.workspace {
-  width: 100%;
-  position: relative;
-  margin-bottom: 1rem;
-}
-
 .canvas-container {
   position: relative;
   width: 100%;
-  min-height: 300px;
+  min-height: 400px;
   background: #fff;
   border: 1px dashed #ccc;
 }
@@ -64,4 +80,13 @@ button#download {
 button#download[disabled] {
   background: #999;
   cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .main {
+    flex-direction: column;
+  }
+  .left, .right {
+    flex: 1 1 auto;
+  }
 } 
