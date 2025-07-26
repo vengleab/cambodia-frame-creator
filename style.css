@@ -49,7 +49,10 @@ header {
 
 .canvas-container {
   position: relative;
-  width: 100%;
+  /* Shrink-to-fit so the interactive area only covers the image itself */
+  width: auto;
+  display: inline-block;
+  max-width: 100%;
   min-height: 400px;
   background: #fff;
   border: 1px dashed #ccc;

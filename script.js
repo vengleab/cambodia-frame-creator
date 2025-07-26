@@ -55,6 +55,17 @@ document.addEventListener('DOMContentLoaded', () => {
         adjustFrameOverlay();
         downloadBtn.disabled = false;
 
+        // Once the image and cropper are ready, remove the placeholder space
+        // and shrink the container so that touch gestures outside the image
+        // no longer move the frame (particularly important on mobile).
+        const canvasContainer = document.querySelector('.canvas-container');
+        if (canvasContainer && cropper) {
+          canvasContainer.style.minHeight = '0';
+          const { width, height } = cropper.getContainerData();
+          canvasContainer.style.width = `${width}px`;
+          canvasContainer.style.height = `${height}px`;
+        }
+
         // Initial preview render
         schedulePreviewUpdate();
       },
