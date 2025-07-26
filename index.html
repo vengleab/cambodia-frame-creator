@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Photo Frame Creator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>Photo Frame Creator</h1>
+
+    <label class="upload-label">
+      <span>Select a photo</span>
+      <input type="file" id="upload" accept="image/*" hidden />
+    </label>
+
+    <section class="workspace">
+      <div class="canvas-container">
+        <img id="image" alt="Your photo" style="display:none;" />
+        <img id="frame" class="frame-overlay" src="./frame.png" alt="Frame overlay" style="display:none;" />
+      </div>
+    </section>
+
+    <button id="download" disabled>Download Framed Photo</button>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html> 
